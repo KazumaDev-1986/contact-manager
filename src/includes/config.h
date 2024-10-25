@@ -7,6 +7,8 @@
 
 #define __CM_SCREENS_SIZE__ 1
 
-#define __CM_FILE_NAME "contact.data"
+#define __CM_FILE_NAME__ "contact.data"
+
+#define __CM_MAX_LENGTH_CONTACT_FIELD__ 100
 
 #endif // __CONFIG_H__

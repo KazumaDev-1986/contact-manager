@@ -6,9 +6,9 @@
 #include <stdint.h>
 
 struct Contact {
-  char name[100];
-  char email[100];
-  char phone[100];
+  char name[__CM_MAX_LENGTH_CONTACT_FIELD__];
+  char email[__CM_MAX_LENGTH_CONTACT_FIELD__];
+  char phone[__CM_MAX_LENGTH_CONTACT_FIELD__];
 };
 
 struct ListContact {

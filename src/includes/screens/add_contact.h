@@ -2,10 +2,14 @@
 #define __CM_ADD_CONTACT__
 
 #include "../config.h"
+#include "../contact.h"
 #include "../screen.h"
+#include <stdint.h>
 
 __CM__ struct AddContactScreen {
-  // TODO
+  struct Contact contact;
+  int8_t step;
+  enum ScreenType nextScreen;
 };
 
 #if defined(__cplusplus)
@@ -19,7 +23,7 @@ __CM__ void update_add_contact_screen(struct AddContactScreen *const screen);
 __CM__ void
 draw_add_contact_screen(const struct AddContactScreen *const screen);
 
-__CM__ void destroy_add_contact_screen(struct AddContactScreen *const screen);
+__CM__ void destroy_add_contact_screen(struct AddContactScreen **const ptr);
 
 __CM__ enum ScreenType
 finish_add_contact_screen(const struct AddContactScreen *const screen);

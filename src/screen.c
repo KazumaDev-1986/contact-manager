@@ -1,4 +1,5 @@
 #include "includes/screen.h"
+#include "includes/screens/add_contact.h"
 #include "includes/screens/menu.h"
 #include <errno.h>
 #include <stdio.h>
@@ -47,6 +48,7 @@ __CM__ void update_screen(struct Screen *screen) {
     update_menu_screen((struct MenuScreen *)screen->value);
     break;
   case ADD_CONTACT_SCREEN:
+    update_add_contact_screen((struct AddContactScreen *)screen->value);
     break;
   case DELETE_CONTACT_SCREEN:
     break;
@@ -65,6 +67,7 @@ __CM__ void draw_screen(const struct Screen *const screen) {
     draw_menu_screen((struct MenuScreen *)screen->value);
     break;
   case ADD_CONTACT_SCREEN:
+    draw_add_contact_screen((struct AddContactScreen *)screen->value);
     break;
   case DELETE_CONTACT_SCREEN:
     break;
@@ -84,6 +87,7 @@ __CM__ void destroy_screen(struct Screen **ptr) {
       destroy_menu_screen((struct MenuScreen **)&((*ptr)->value));
       break;
     case ADD_CONTACT_SCREEN:
+      destroy_add_contact_screen((struct AddContactScreen **)&(*ptr)->value);
       break;
     case DELETE_CONTACT_SCREEN:
       break;
@@ -108,6 +112,8 @@ __CM__ enum ScreenType next_screen(const struct Screen *const screen) {
     type = finish_menu_screen((const struct MenuScreen *const)screen->value);
     break;
   case ADD_CONTACT_SCREEN:
+    type = finish_add_contact_screen(
+        (const struct AddContactScreen *const)screen->value);
     break;
   case DELETE_CONTACT_SCREEN:
     break;
@@ -132,6 +138,7 @@ __CM__ static void *create_screen_by_type(enum ScreenType type) {
     screen = create_menu_screen();
     break;
   case ADD_CONTACT_SCREEN:
+    screen = create_add_contact_screen();
     break;
   case DELETE_CONTACT_SCREEN:
     break;

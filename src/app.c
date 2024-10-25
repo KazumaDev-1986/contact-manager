@@ -30,7 +30,9 @@ __CM__ static void verify_screen_app(struct App *const app);
 __CM__ struct App *create_app(void) {
   struct App *app = (struct App *)malloc(sizeof(struct App));
   if (!app) {
+#if defined(__CM_DEBUG__)
     printf("Error to reserve memory: %s\n", strerror(errno));
+#endif
     return NULL;
   }
 

@@ -12,7 +12,9 @@ __CM__ struct MenuScreen *create_menu_screen(void) {
   struct MenuScreen *menu =
       (struct MenuScreen *)malloc(sizeof(struct MenuScreen));
   if (!menu) {
+#if defined(__CM_DEBUG__)
     printf("Error to reserve memory: %s\n", strerror(errno));
+#endif
     return NULL;
   }
   menu->nextScreen = VOID_SCREEN;
@@ -52,6 +54,12 @@ __CM__ void update_menu_screen(struct MenuScreen *menu) {
 }
 
 __CM__ void draw_menu_screen(const struct MenuScreen *const menu) {
+  printf(""
+         "---------------------------------------------------------\n"
+         "Menu Principal\n"
+         "---------------------------------------------------------"
+         "\n");
+
   printf(""
          "1. Agregar contacto\n"
          "2. Eliminar contacto\n"

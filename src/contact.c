@@ -14,6 +14,11 @@ extern "C" {
 
 __CM__ static void copy_field(char *const origin, char *const dest);
 
+__CM__ static bool add_contact_list(struct ContactList *ptr,
+                                    struct Contact *const contact);
+
+__CM__ static long get_contact_count(FILE *file);
+
 #if defined(__cplusplus)
 }
 #endif
@@ -25,7 +30,7 @@ __CM__ bool save_contact(const struct Contact *const contact) {
   FILE *file = NULL;
   bool result = false;
 
-  file = fopen(__CM_FILE_NAME__, "wb");
+  file = fopen(__CM_FILE_NAME__, "ab");
   if (file) {
     fwrite(contact, sizeof(struct Contact), 1, file);
     fclose(file);
@@ -38,51 +43,41 @@ __CM__ bool save_contact(const struct Contact *const contact) {
   return result;
 }
 
-__CM__ struct Contact *get_contact_by_name(const char *name) {
-  struct Contact *contact = NULL;
+__CM__ struct ContactList get_contact_by_name(const char *name) {
+  struct ContactList contactList = {.data = NULL, .size = 0};
 
   FILE *file = NULL;
   file = fopen(__CM_FILE_NAME__, "rb");
   if (file) {
 
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    rewind(file);
+    long contactCount = get_contact_count(file);
+    struct Contact *contacts = NULL;
+    if (contactCount > 0) {
+      contacts =
+          (struct Contact *)malloc(sizeof(struct Contact) * contactCount);
+      size_t read = fread(contacts, sizeof(struct Contact), contactCount, file);
+      if (read == contactCount) {
+        for (size_t i = 0; i < contactCount; ++i) {
+          if (name == NULL || strstr(contacts[i].name, name) != NULL) {
+            add_contact_list(&contactList, &contacts[i]);
+          }
+        }
+      }
+    }
 
-    size_t contactCount = fileSize / sizeof(struct Contact);
-
-    struct Contact *contacts =
-        (struct Contact *)malloc(sizeof(struct Contact) * contactCount);
-    size_t read = fread(contacts, sizeof(struct Contact), contactCount, file);
-    if (read != contactCount) {
+    else {
 #if defined(__CM_DENBUG__)
       printf("Error to open de file: %s\n", __CM_FILE_NAME__);
 #endif
-      free(contacts);
-      contacts = NULL;
-      fclose(file);
-      return NULL;
-    }
-
-    for (size_t i = 0; i < contactCount; ++i) {
-      if (strcmp(contacts[i].name, name) == 0) {
-        contact = (struct Contact *)malloc(sizeof(struct Contact));
-        copy_field(contacts[i].name, contact->name);
-        copy_field(contacts[i].email, contact->email);
-        copy_field(contacts[i].phone, contact->phone);
-      }
     }
 
     free(contacts);
     contacts = NULL;
-
     fclose(file);
   }
 
-  return contact;
+  return contactList;
 }
-
-__CM__ struct Contact **list_contact(void) { return NULL; }
 
 __CM__ void delete_contact_by_name(const char *name) {
   // TODO
@@ -91,7 +86,50 @@ __CM__ void delete_contact_by_name(const char *name) {
 // ---------------------------------------------------------
 // Internal functions definition.
 // ---------------------------------------------------------
-__CM__ static void copy_field(char *const origin, char *const dest) {
-  strncpy(dest, origin, sizeof(dest) - 1);
+__CM__ static void copy_field(char *const dest, char *const source) {
+  strncpy(dest, source, __CM_MAX_LENGTH_CONTACT_FIELD__ - 1);
   dest[__CM_MAX_LENGTH_CONTACT_FIELD__ - 1] = '\0';
+}
+
+__CM__ static bool add_contact_list(struct ContactList *ptr,
+                                    struct Contact *const contact) {
+  bool result = 1;
+  struct Contact *temp = NULL;
+  size_t size = ptr->size + 1;
+
+  // TODO: improve memory assign.
+  if (ptr->data == NULL) {
+    temp = (struct Contact *)malloc(sizeof(struct Contact));
+  } else {
+    temp = (struct Contact *)realloc(ptr->data, size * sizeof(struct Contact));
+  }
+
+  if (temp) {
+    result = 0;
+    ptr->data = temp;
+    ptr->data[ptr->size] = (struct Contact){0};
+    copy_field(ptr->data[ptr->size].name, contact->name);
+    copy_field(ptr->data[ptr->size].email, contact->email);
+    copy_field(ptr->data[ptr->size].phone, contact->phone);
+
+    ptr->size = size;
+  }
+
+  return result;
+}
+
+__CM__ static long get_contact_count(FILE *file) {
+  long count = 0;
+
+  if (file) {
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+
+    if (fileSize > 0) {
+      count = fileSize / sizeof(struct Contact);
+    }
+  }
+
+  return count;
 }

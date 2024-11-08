@@ -66,6 +66,8 @@ __CM__ void draw_menu_screen(const struct MenuScreen *const menu) {
          "3. Buscar contacto\n"
          "4. Listar todos los contactos\n"
          "5. Salir\n"
+         "\n"
+         "Ingrese una opcion: "
          "");
 }
 

@@ -4,6 +4,7 @@ COMPILER := gcc
 SRC := $(shell find src -name "*.c")
 OBJFILES := $(SRC:.c=.o)
 CFLAGS := -Wall -pedantic -g -std=c99
+FILENAME := contact.data
 
 .PHONY: clean cleanall
 
@@ -19,3 +20,4 @@ clean:
 cleanall:
 	@-rm -f $(APP)
 	@-rm -f $(OBJFILES)
+	@-rm -f $(FILENAME)

@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "definition.h"
+#include <stddef.h>
 #include <stdint.h>
 
 struct Contact {
@@ -11,9 +12,9 @@ struct Contact {
   char phone[__CM_MAX_LENGTH_CONTACT_FIELD__];
 };
 
-struct ListContact {
-  struct Contact *contact;
-  int32_t length;
+struct ContactList {
+  struct Contact *data;
+  size_t size;
 };
 
 #if defined(__cplusplus)
@@ -22,9 +23,7 @@ extern "C" {
 
 __CM__ bool save_contact(const struct Contact *const contact);
 
-__CM__ struct Contact *get_contact_by_name(const char *name);
-
-__CM__ struct Contact **list_contact(void);
+__CM__ struct ContactList get_contact_by_name(const char *name);
 
 __CM__ void delete_contact_by_name(const char *name);
 

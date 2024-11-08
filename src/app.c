@@ -46,6 +46,7 @@ __CM__ struct App *create_app(void) {
 
   return app;
 }
+
 __CM__ void run_app(struct App *const app) {
   while (app->live) {
     clear_background();
@@ -53,6 +54,7 @@ __CM__ void run_app(struct App *const app) {
     update_app(app);
   }
 }
+
 __CM__ void destroy_app(struct App **ptr) {
   if (ptr) {
     destroy_screen(&(*ptr)->screen);

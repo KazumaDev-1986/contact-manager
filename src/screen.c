@@ -1,5 +1,6 @@
 #include "includes/screen.h"
 #include "includes/screens/add_contact.h"
+#include "includes/screens/list_contact.h"
 #include "includes/screens/menu.h"
 #include <errno.h>
 #include <stdio.h>
@@ -55,6 +56,7 @@ __CM__ void update_screen(struct Screen *screen) {
   case SEARCH_CONTACT_SCREEN:
     break;
   case LIST_CONTACT_SCREEN:
+    update_list_contact_screen((struct ListContactScreen *)screen->value);
     break;
   default:
     break;
@@ -74,6 +76,7 @@ __CM__ void draw_screen(const struct Screen *const screen) {
   case SEARCH_CONTACT_SCREEN:
     break;
   case LIST_CONTACT_SCREEN:
+    draw_list_contact_screen((struct ListContactScreen *)screen->value);
     break;
   default:
     break;
@@ -94,6 +97,7 @@ __CM__ void destroy_screen(struct Screen **ptr) {
     case SEARCH_CONTACT_SCREEN:
       break;
     case LIST_CONTACT_SCREEN:
+      destroy_list_contact_screen((struct ListContactScreen **)(*ptr)->value);
       break;
     default:
       break;
@@ -120,6 +124,8 @@ __CM__ enum ScreenType next_screen(const struct Screen *const screen) {
   case SEARCH_CONTACT_SCREEN:
     break;
   case LIST_CONTACT_SCREEN:
+    type = finish_list_contact_screen(
+        (const struct ListContactScreen *const)screen->value);
     break;
   default:
     break;
@@ -145,6 +151,7 @@ __CM__ static void *create_screen_by_type(enum ScreenType type) {
   case SEARCH_CONTACT_SCREEN:
     break;
   case LIST_CONTACT_SCREEN:
+    screen = create_list_contact_screen();
     break;
   default:
     break;
